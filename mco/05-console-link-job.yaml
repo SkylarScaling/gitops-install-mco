@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mco-console-linker
+  namespace: open-cluster-management-observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: mco-console-linker-role
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+rules:
+  - apiGroups: ["route.openshift.io"]
+    resources: ["routes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["console.openshift.io"]
+    resources: ["consolelinks"]
+    verbs: ["get", "list", "create", "patch", "update"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: mco-console-linker-binding
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: mco-console-linker-role
+subjects:
+  - kind: ServiceAccount
+    name: mco-console-linker
+    namespace: open-cluster-management-observability
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-mco-console-link
+  namespace: open-cluster-management-observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      serviceAccountName: mco-console-linker
+      restartPolicy: OnFailure
+      containers:
+        - name: linker
+          image: quay.io/openshift/origin-cli:latest
+          command:
+            - /bin/bash
+            - -c
+            - |
+              set -e
+              echo "Waiting for MCO to generate the Grafana Route..."
+              
+              # Loop until the route physically exists
+              until oc get route grafana -n open-cluster-management-observability &>/dev/null; do
+                echo "Still waiting for Grafana Route..."
+                sleep 10
+              done
+              
+              echo "Extracting Grafana Host URL..."
+              GRAFANA_HOST=$(oc get route grafana -n open-cluster-management-observability -o jsonpath='{.spec.host}')
+              
+              echo "Creating OpenShift ConsoleLink..."
+              cat <<EOF | oc apply -f -
+              apiVersion: console.openshift.io/v1
+              kind: ConsoleLink
+              metadata:
+                name: acm-observability-grafana
+              spec:
+                href: "https://$GRAFANA_HOST"
+                location: ApplicationMenu
+                text: Global Observability (Grafana)
+                applicationMenu:
+                  section: Observability
+              EOF
+              
+              echo "ConsoleLink successfully created!"
