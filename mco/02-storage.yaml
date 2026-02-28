@@ -1,0 +1,10 @@
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: observability-acm-s3
+  namespace: open-cluster-management-observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  generateBucketName: observability-acm-s3-bucket
+  storageClassName: openshift-storage.noobaa.io
