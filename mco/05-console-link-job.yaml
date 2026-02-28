@@ -80,9 +80,10 @@ spec:
               spec:
                 href: "https://$GRAFANA_HOST"
                 location: ApplicationMenu
-                text: Global Observability (Grafana)
+                text: Advanced Cluster Management Observability (Grafana)
                 applicationMenu:
                   section: Observability
+                  imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
               EOF
               
               echo "ConsoleLink successfully created!"
