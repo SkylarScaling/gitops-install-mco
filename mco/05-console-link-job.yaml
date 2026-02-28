@@ -46,6 +46,7 @@ metadata:
   namespace: open-cluster-management-observability
   annotations:
     argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/hook: Sync
     argocd.argoproj.io/hook-delete-policy: HookSucceeded
 spec:
   template:
@@ -80,7 +81,7 @@ spec:
               spec:
                 href: "https://$GRAFANA_HOST"
                 location: ApplicationMenu
-                text: Advanced Cluster Management Observability (Grafana)
+                text: Red Hat Advanced Cluster Management Observability (Grafana)
                 applicationMenu:
                   section: Observability
                   imageURL: 'https://upload.wikimedia.org/wikipedia/commons/3/3a/OpenShift-LogoType.svg'
