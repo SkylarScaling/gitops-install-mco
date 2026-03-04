@@ -86,7 +86,7 @@ spec:
                   type: s3
                   config:
                     bucket: $BUCKET_NAME
-                    endpoint: $BUCKET_HOST:$BUCKET_PORT
+                    endpoint: https://$BUCKET_HOST:$BUCKET_PORT
                     insecure: true
                     access_key: $AWS_ACCESS_KEY_ID
                     secret_key: $AWS_SECRET_ACCESS_KEY
