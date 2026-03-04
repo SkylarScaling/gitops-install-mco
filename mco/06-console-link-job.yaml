@@ -28,7 +28,7 @@ kind: ClusterRoleBinding
 metadata:
   name: mco-console-linker-binding
   annotations:
-    argocd.argoproj.io/sync-wave: "4"
+    argocd.argoproj.io/sync-wave: "5"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

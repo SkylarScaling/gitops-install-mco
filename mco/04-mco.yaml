@@ -11,3 +11,14 @@ spec:
     metricObjectStorage:
       name: thanos-object-storage
       key: thanos.yaml
+  capabilities:
+    platform:
+      analytics:
+        incidentDetection:
+          enabled: true
+  nodeSelector:
+    node-role.kubernetes.io/infra: ""
+    tolerations:
+      - key: node-role.kubernetes.io/infra
+        effect: NoSchedule
+        operator: Exists
