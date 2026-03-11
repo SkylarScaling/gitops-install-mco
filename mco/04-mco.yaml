@@ -16,10 +16,6 @@ spec:
       analytics:
         incidentDetection:
           enabled: true
-      metrics:
-        ui:
-          perses:
-            enabled: false
   nodeSelector:
     node-role.kubernetes.io/infra: ""
   tolerations:
